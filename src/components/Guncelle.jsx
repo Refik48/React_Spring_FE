@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import KisilerServis from "../service/KisilerServis";
-const Kayit = () => {
+import { useHistory, useParams } from "react-router";
+const Guncelle = () => {
   const [kisi, setKisi] = useState({ ad: "", soyad: "", yas: "" });
   const { ad, soyad, yas } = kisi;
   const degistir = (event) => {
@@ -13,12 +14,22 @@ const Kayit = () => {
       };
     });
   };
-  const handleSubmit = () => {
-    KisilerServis.kisiEkle(kisi).then((res) => console.log(res));
+  const { id } = useParams();
+  const history = useHistory();
+  useEffect(() => {
+    KisilerServis.idIleKisiGetir(id).then((res) => {
+      setKisi(res.data);
+    });
+  }, [id]);
+  const handleGuncelle = () => {
+    KisilerServis.idIleKisiGuncelle(id, kisi).then();
+  };
+  const handleIptal = () => {
+    history.push("/");
   };
   return (
     <Container>
-      <h1 className="text-center mt-3">KAYIT SAYFASI</h1>
+     <h1 className="text-center mt-3">GUNCELLEME SAYFASI</h1>
       <Form className="m-4">
         <Form.Group controlId="ad">
           <Form.Label>Ad</Form.Label>
@@ -51,15 +62,20 @@ const Kayit = () => {
           />
         </Form.Group>
         <div className="mt-3 text-center">
-          <Button variant="primary" type="submit" onClick={handleSubmit}>
-            Kaydet
+          <Button variant="primary" type="submit" onClick={handleGuncelle}>
+            Guncelle
           </Button>
-          <Button variant="danger" type="reset" className="ms-2">
-            Temizle
+          <Button
+            variant="danger"
+            type="reset"
+            onClick={handleIptal}
+            className="ms-2"
+          >
+            İptal
           </Button>
         </div>
       </Form>
     </Container>
   );
 };
-export default Kayit;
+export default Guncelle;
